@@ -528,6 +528,21 @@
         <div class="exercise-note">10' Z2 → 20-30' continui a 5:30-5:40/km (FC 145-160) → 10' Z2. Specifico maratona.</div>
       </div>
     </div>
+
+    <!-- LOG CORSA -->
+    <div class="section-title">🏃 Log Uscite Corsa</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <input class="log-input" type="date" id="run-date" style="width:100%" />
+        <input class="log-input" type="number" id="run-km" placeholder="km" step="0.1" style="width:100%" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center;">
+        <input class="log-input" type="text" id="run-pace" placeholder="passo mm:ss" style="width:100%" />
+        <input class="log-input" type="number" id="run-fc" placeholder="FC media" style="width:100%" />
+        <button class="log-btn" onclick="saveRun()">+</button>
+      </div>
+      <div class="log-history" id="run-history"></div>
+    </div>
   </div>
 
   <!-- NUTRIZIONE -->
@@ -630,6 +645,29 @@
         <div class="exercise-note">Vigilia allenamento importante, giorno dopo lungo o gara. Conta sempre le kcal e scala i carboidrati.</div>
       </div>
     </div>
+
+    <!-- DEFICIT CALORICO -->
+    <div class="section-title">🔥 Deficit Calorico</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Inserisci mangiato e consumato ogni giorno</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <input class="log-input" type="date" id="deficit-date" style="width:100%" />
+        <button class="log-btn" onclick="saveDeficit()" style="width:100%">+ Salva</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">🍽 Mangiato (kcal)</div>
+          <input class="log-input" type="number" id="deficit-eaten" placeholder="es. 2200" style="width:100%" />
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">🔥 Consumato (kcal)</div>
+          <input class="log-input" type="number" id="deficit-burned" placeholder="es. 2600" style="width:100%" />
+        </div>
+      </div>
+      <div id="deficit-stats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;"></div>
+      <canvas id="deficit-chart" height="160" style="width:100%;margin-bottom:8px;"></canvas>
+      <div class="log-history" id="deficit-history"></div>
+    </div>
   </div>
 
   <!-- PROGRESSI -->
@@ -645,33 +683,23 @@
     <div class="progress-log">
       <h3>⚖️ Peso — Inserimento rapido</h3>
       <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Ogni lunedì mattina a digiuno — stesse condizioni</p>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <input class="log-input" type="date" id="weight-date" style="flex:1;min-width:110px" />
-        <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:70px">
-          <input class="log-input" type="number" id="weight-val" placeholder="kg" step="0.1" style="flex:1" />
-          <span style="color:var(--text2);font-size:13px">kg</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <input class="log-input" type="date" id="weight-date" style="width:100%" />
+        <button class="log-btn" onclick="saveWeight()" style="width:100%">Salva</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">⚖️ Peso (kg)</div>
+          <input class="log-input" type="number" id="weight-val" placeholder="es. 73.5" step="0.1" style="width:100%" />
         </div>
-        <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:70px">
-          <input class="log-input" type="number" id="weight-bf" placeholder="% grasso" step="0.1" style="flex:1" />
-          <span style="color:var(--text2);font-size:13px">%</span>
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">📊 % Grasso</div>
+          <input class="log-input" type="number" id="weight-bf" placeholder="es. 23.5" step="0.1" style="width:100%" />
         </div>
-        <button class="log-btn" onclick="saveWeight()">Salva</button>
       </div>
       <div class="log-history" id="weight-history"></div>
     </div>
 
-    <!-- LOG CORSA -->
-    <div class="progress-log">
-      <h3>🏃 Log Uscite Corsa</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center;">
-        <input class="log-input" type="date" id="run-date" />
-        <input class="log-input" type="number" id="run-km" placeholder="km" step="0.1" />
-        <input class="log-input" type="text" id="run-pace" placeholder="passo mm:ss" />
-        <input class="log-input" type="number" id="run-fc" placeholder="FC media" />
-        <button class="log-btn" onclick="saveRun()">+</button>
-      </div>
-      <div class="log-history" id="run-history"></div>
-    </div>
   </div>
 
 </main>
@@ -1317,6 +1345,123 @@ function drawLineChart(ctx, canvas, labels, data, color, label, goalVal) {
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('weight-date').value = today;
 document.getElementById('run-date').value = today;
+document.getElementById('deficit-date').value = today;
+
+// ===== DEFICIT CALORICO =====
+function getDeficits() { return getStore('dan_deficits'); }
+
+function saveDeficit() {
+  const date = document.getElementById('deficit-date').value;
+  const eaten = document.getElementById('deficit-eaten').value;
+  const burned = document.getElementById('deficit-burned').value;
+  if (!date || !eaten || !burned) return;
+  let deficits = getDeficits().filter(d => d.date !== date);
+  deficits.unshift({ date, eaten: parseInt(eaten), burned: parseInt(burned) });
+  deficits.sort((a,b) => b.date.localeCompare(a.date));
+  setStore('dan_deficits', deficits);
+  document.getElementById('deficit-eaten').value = '';
+  document.getElementById('deficit-burned').value = '';
+  renderDeficit();
+}
+
+function deleteDeficit(date) {
+  setStore('dan_deficits', getDeficits().filter(d => d.date !== date));
+  renderDeficit();
+}
+
+function renderDeficit() {
+  const deficits = getDeficits();
+  const last7 = deficits.slice(0, 7);
+  const statsEl = document.getElementById('deficit-stats');
+  if (last7.length > 0) {
+    const avgDeficit = Math.round(last7.reduce((s,d) => s + (d.burned - d.eaten), 0) / last7.length);
+    const avgEaten = Math.round(last7.reduce((s,d) => s + d.eaten, 0) / last7.length);
+    const weekTotal = last7.reduce((s,d) => s + (d.burned - d.eaten), 0);
+    const dc = avgDeficit >= 0 ? 'var(--green)' : '#ff6b6b';
+    const wc = weekTotal >= 0 ? 'var(--green)' : '#ff6b6b';
+    statsEl.innerHTML = `
+      <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px">MEDIA DEFICIT</div>
+        <div style="font-family:'Bebas Neue';font-size:26px;color:${dc}">${avgDeficit >= 0 ? '-' : '+'}${Math.abs(avgDeficit)}</div>
+        <div style="font-size:10px;color:var(--text3)">kcal/giorno</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px">MEDIA MANGIATO</div>
+        <div style="font-family:'Bebas Neue';font-size:26px;color:var(--accent)">${avgEaten}</div>
+        <div style="font-size:10px;color:var(--text3)">kcal/giorno</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px">TOTALE SETT.</div>
+        <div style="font-family:'Bebas Neue';font-size:26px;color:${wc}">${weekTotal >= 0 ? '-' : '+'}${Math.abs(weekTotal)}</div>
+        <div style="font-size:10px;color:var(--text3)">kcal</div>
+      </div>`;
+  } else { statsEl.innerHTML = ''; }
+
+  renderDeficitChart(deficits);
+
+  const container = document.getElementById('deficit-history');
+  if (!deficits.length) { container.innerHTML = '<p style="color:var(--text3);font-size:13px;margin-top:8px">Nessun dato ancora.</p>'; return; }
+  container.innerHTML = deficits.slice(0,10).map(d => {
+    const def = d.burned - d.eaten;
+    const color = def >= 0 ? 'var(--green)' : '#ff6b6b';
+    return `<div class="log-entry">
+      <span class="log-entry-date">${d.date.slice(5)}</span>
+      <span style="font-size:12px;color:var(--text2)">🍽 ${d.eaten} · 🔥 ${d.burned}</span>
+      <span style="font-size:13px;font-weight:700;color:${color}">${def >= 0 ? '-' : '+'}${Math.abs(def)}</span>
+      <button onclick="deleteDeficit('${d.date}')" style="background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0 4px;">×</button>
+    </div>`;
+  }).join('');
+}
+
+function renderDeficitChart(deficits) {
+  const canvas = document.getElementById('deficit-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const data = [...deficits].reverse().slice(-14);
+  if (!data.length) return;
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.offsetWidth || 320;
+  const H = 160;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+  const pad = { top:16, right:16, bottom:28, left:44 };
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
+  const values = data.map(d => d.burned - d.eaten);
+  const maxVal = Math.max(...values, 500);
+  const minVal = Math.min(...values, -200);
+  const range = maxVal - minVal || 1;
+  // Grid
+  [0, 250, 500].forEach(v => {
+    const y = pad.top + ch - ((v - minVal) / range) * ch;
+    ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left+cw, y); ctx.stroke();
+    ctx.fillStyle = '#555'; ctx.font = '10px DM Mono'; ctx.textAlign = 'right';
+    ctx.fillText(v, pad.left-4, y+4);
+  });
+  // Zero line
+  const zeroY = pad.top + ch - ((0 - minVal) / range) * ch;
+  ctx.strokeStyle = '#555'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(pad.left, zeroY); ctx.lineTo(pad.left+cw, zeroY); ctx.stroke();
+  ctx.setLineDash([]);
+  // Bars
+  const step = cw / data.length;
+  const barW = Math.max(step - 6, 6);
+  data.forEach((d, i) => {
+    const val = d.burned - d.eaten;
+    const barH = Math.abs((val / range) * ch);
+    const x = pad.left + i * step + (step - barW) / 2;
+    const y = val >= 0 ? zeroY - barH : zeroY;
+    ctx.fillStyle = val >= 0 ? '#00e87a' : '#ff6b6b';
+    ctx.beginPath(); ctx.roundRect(x, y, barW, Math.max(barH,2), 3); ctx.fill();
+    if (data.length <= 10) {
+      ctx.fillStyle = '#555'; ctx.font = '9px DM Mono'; ctx.textAlign = 'center';
+      ctx.fillText(d.date.slice(5), pad.left + i * step + step/2, H-6);
+    }
+  });
+}
 
 // ===== INIT =====
 buildWeeks();
@@ -1325,6 +1470,7 @@ buildExercises(exercisesB, 'exercises-B', 'B');
 buildExercises(exercisesC, 'exercises-C', 'C');
 renderWeightHistory();
 renderRunHistory();
+renderDeficit();
 updateOverview();
 setTimeout(renderWeightChart, 100);
 
