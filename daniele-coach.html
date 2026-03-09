@@ -324,11 +324,11 @@
       <div class="hero-name">Daniele Corbo</div>
       <div class="hero-stats">
         <div class="hero-stat">
-          <div class="hero-stat-val">72<span style="font-size:16px">kg</span></div>
+          <div class="hero-stat-val" id="overview-peso">72<span style="font-size:16px">kg</span></div>
           <div class="hero-stat-label">Peso attuale</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-val">23<span style="font-size:16px">%</span></div>
+          <div class="hero-stat-val" id="overview-bf">23<span style="font-size:16px">%</span></div>
           <div class="hero-stat-label">Massa grassa</div>
         </div>
         <div class="hero-stat">
@@ -631,22 +631,33 @@
 
   <!-- PROGRESSI -->
   <div class="section" id="progressi">
+
+    <!-- GRAFICO PESO -->
+    <div class="progress-log">
+      <h3>📈 Andamento Peso</h3>
+      <canvas id="weight-chart" height="180" style="width:100%;margin-bottom:4px;"></canvas>
+    </div>
+
+    <!-- LOG PESO -->
     <div class="progress-log">
       <h3>⚖️ Peso — Inserimento rapido</h3>
-      <p style="font-size:12px;color:var(--text2);margin-bottom:16px;">Inserisci ogni volta che ti pesi — mattina, a digiuno, stesse condizioni</p>
-      
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;">
-        <input class="log-input" type="date" id="weight-date" style="flex:1" />
-        <div style="display:flex;align-items:center;gap:6px;flex:1">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Ogni lunedì mattina a digiuno — stesse condizioni</p>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input class="log-input" type="date" id="weight-date" style="flex:1;min-width:110px" />
+        <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:70px">
           <input class="log-input" type="number" id="weight-val" placeholder="kg" step="0.1" style="flex:1" />
-          <span style="color:var(--text2);font-size:14px">kg</span>
+          <span style="color:var(--text2);font-size:13px">kg</span>
         </div>
-        <button class="log-btn" onclick="saveWeight()" style="padding:8px 20px">Salva</button>
+        <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:70px">
+          <input class="log-input" type="number" id="weight-bf" placeholder="% grasso" step="0.1" style="flex:1" />
+          <span style="color:var(--text2);font-size:13px">%</span>
+        </div>
+        <button class="log-btn" onclick="saveWeight()">Salva</button>
       </div>
-
       <div class="log-history" id="weight-history"></div>
     </div>
 
+    <!-- LOG CORSA -->
     <div class="progress-log">
       <h3>🏃 Log Uscite Corsa</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center;">
@@ -903,38 +914,114 @@ function showScheda(id) {
   document.getElementById('scheda-'+id).classList.add('active');
 }
 
+// ===== SCHEDE CUSTOM (localStorage) =====
+function getSchedaData(scheda) {
+  try {
+    const d = JSON.parse(localStorage.getItem('dan_scheda_' + scheda));
+    return d || null;
+  } catch(e) { return null; }
+}
+function setSchedaData(scheda, data) {
+  try { localStorage.setItem('dan_scheda_' + scheda, JSON.stringify(data)); } catch(e) {}
+}
+function getSchedaExercises(scheda) {
+  const saved = getSchedaData(scheda);
+  if (saved) return saved;
+  const defaults = { A: exercisesA, B: exercisesB, C: exercisesC };
+  return JSON.parse(JSON.stringify(defaults[scheda]));
+}
+
 function buildExercises(exercises, containerId, scheda) {
   const gymData = getGymData();
+  const exList = getSchedaExercises(scheda);
   const container = document.getElementById(containerId);
   container.innerHTML = '';
-  exercises.forEach(ex => {
+
+  exList.forEach((ex, idx) => {
     const savedWeek = gymData[ex.key] || {};
     const weeks = ['S1','S2','S3','S4','S5','S6','S7','S8'];
     const card = document.createElement('div');
     card.className = 'exercise-card';
+    card.style.position = 'relative';
     card.innerHTML = `
-      <div class="exercise-header">
-        <div class="exercise-name">${ex.name}</div>
-        <div class="exercise-sets">${ex.sets}</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
+        <div style="flex:1;min-width:0;">
+          <input
+            value="${ex.name}"
+            onchange="updateExField('${scheda}',${idx},'name',this.value)"
+            style="background:transparent;border:none;border-bottom:1px solid var(--accent);color:var(--text1);font-size:15px;font-weight:700;width:100%;padding:2px 0;outline:none;font-family:inherit;"
+          />
+        </div>
+        <button onclick="deleteExercise('${scheda}',${idx})" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;" title="Elimina">×</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="font-size:11px;color:var(--text3);">Serie/Rep:</span>
+        <input
+          value="${ex.sets}"
+          onchange="updateExField('${scheda}',${idx},'sets',this.value)"
+          style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--accent);font-size:12px;padding:3px 8px;width:130px;outline:none;font-family:inherit;"
+        />
       </div>
       ${ex.note ? `<div class="exercise-note">${ex.note}</div>` : ''}
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;">
-        ${weeks.map(w => `
+        ${weeks.map((w, wi) => {
+          const prevWeek = wi > 0 ? weeks[wi-1] : null;
+          const prevVal = prevWeek ? (savedWeek[prevWeek] || '') : '';
+          const currVal = savedWeek[w] || '';
+          let suggestion = '';
+          if (prevVal && !currVal) {
+            suggestion = `<div style="font-size:9px;color:var(--accent);margin-top:2px;">↑ +2.5kg?</div>`;
+          }
+          return `
           <div>
             <div style="font-size:10px;color:var(--text3);margin-bottom:3px;font-family:'DM Mono'">${w}</div>
-            <div style="display:flex;align-items:center;gap:3px">
-              <input class="weight-input" style="width:100%;font-size:12px;padding:5px 7px"
-                type="number" placeholder="kg"
-                value="${savedWeek[w] || ''}"
-                onchange="saveWeight2('${ex.key}','${w}',this.value)"
-              />
-            </div>
+            <input class="weight-input" style="width:100%;font-size:12px;padding:5px 7px"
+              type="number" placeholder="kg"
+              value="${currVal}"
+              onchange="saveWeight2('${ex.key}','${w}',this.value);buildExercises([],'${containerId}','${scheda}')"
+            />
+            ${suggestion}
           </div>
-        `).join('')}
+        `}).join('')}
       </div>
     `;
     container.appendChild(card);
   });
+
+  // Pulsante aggiungi esercizio
+  const addBtn = document.createElement('button');
+  addBtn.innerHTML = '+ Aggiungi esercizio';
+  addBtn.style.cssText = 'width:100%;margin-top:12px;padding:12px;background:var(--surface2);border:2px dashed var(--accent);border-radius:12px;color:var(--accent);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:1px;';
+  addBtn.onclick = () => addExercise(scheda);
+  container.appendChild(addBtn);
+}
+
+function updateExField(scheda, idx, field, value) {
+  const exList = getSchedaExercises(scheda);
+  exList[idx][field] = value;
+  setSchedaData(scheda, exList);
+}
+
+function deleteExercise(scheda, idx) {
+  const exList = getSchedaExercises(scheda);
+  exList.splice(idx, 1);
+  setSchedaData(scheda, exList);
+  const containerId = 'exercises-' + scheda;
+  buildExercises([], containerId, scheda);
+}
+
+function addExercise(scheda) {
+  const exList = getSchedaExercises(scheda);
+  const newEx = {
+    name: 'Nuovo esercizio',
+    sets: '3×10',
+    note: '',
+    key: 'ex_' + scheda + '_' + Date.now()
+  };
+  exList.push(newEx);
+  setSchedaData(scheda, exList);
+  const containerId = 'exercises-' + scheda;
+  buildExercises([], containerId, scheda);
 }
 
 function saveWeight2(key, week, val) {
@@ -948,12 +1035,15 @@ function saveWeight2(key, week, val) {
 function saveWeight() {
   const date = document.getElementById('weight-date').value;
   const val = document.getElementById('weight-val').value;
+  const bf = document.getElementById('weight-bf').value;
   if (!date || !val) return;
   const weights = getWeights();
-  weights.unshift({ date, val: parseFloat(val) });
+  weights.unshift({ date, val: parseFloat(val), bf: bf ? parseFloat(bf) : null });
   setStore('dan_weights', weights);
   document.getElementById('weight-val').value = '';
+  document.getElementById('weight-bf').value = '';
   renderWeightHistory();
+  updateOverview();
 }
 
 function deleteWeight(i) {
@@ -961,6 +1051,19 @@ function deleteWeight(i) {
   weights.splice(i, 1);
   setStore('dan_weights', weights);
   renderWeightHistory();
+  updateOverview();
+}
+
+function updateOverview() {
+  const weights = getWeights();
+  if (!weights.length) return;
+  const latest = weights[0];
+  document.getElementById('overview-peso').innerHTML = latest.val + '<span style="font-size:16px">kg</span>';
+  // trova l'ultima misurazione con bf
+  const latestBf = weights.find(w => w.bf != null);
+  if (latestBf) {
+    document.getElementById('overview-bf').innerHTML = latestBf.bf + '<span style="font-size:16px">%</span>';
+  }
 }
 
 function renderWeightHistory() {
@@ -968,6 +1071,7 @@ function renderWeightHistory() {
   const container = document.getElementById('weight-history');
   if (!weights.length) {
     container.innerHTML = '<p style="color:var(--text3);font-size:13px;margin-top:8px">Nessun dato ancora.</p>';
+    renderWeightChart();
     return;
   }
   const vals = weights.map(w => w.val);
@@ -996,12 +1100,14 @@ function renderWeightHistory() {
         <div class="log-entry">
           <span class="log-entry-date">${w.date}</span>
           <span class="log-entry-val">${w.val} kg</span>
+          <span style="color:var(--accent2);font-size:12px">${w.bf != null ? w.bf + '%' : '—'}</span>
           <span>${trend}</span>
           <button onclick="deleteWeight(${i})" style="background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0 4px;line-height:1" title="Elimina">×</button>
         </div>
       `;
     }).join('')}
   `;
+  setTimeout(renderWeightChart, 50);
 }
 
 // ===== RUN LOG =====
@@ -1025,6 +1131,7 @@ function saveRun() {
   document.getElementById('run-pace').value = '';
   document.getElementById('run-fc').value = '';
   renderRunHistory();
+  renderKmChart(currentKmView);
 }
 
 function renderRunHistory() {
@@ -1041,6 +1148,142 @@ function renderRunHistory() {
   `).join('');
 }
 
+// ===== GRAFICO PESO =====
+let weightChartInstance = false;
+function renderWeightChart() {
+  const weights = getWeights();
+  const canvas = document.getElementById('weight-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (weights.length < 2) {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#555';
+    ctx.font = '13px DM Sans';
+    ctx.textAlign = 'center';
+    ctx.fillText('Inserisci almeno 2 misurazioni per vedere il grafico', canvas.width/2, 90);
+    return;
+  }
+  const reversed = [...weights].reverse();
+  const labels = reversed.map(w => w.date.slice(5));
+  const data = reversed.map(w => w.val);
+  drawLineChart(ctx, canvas, labels, data, '#aaff00', 'Peso (kg)', 65);
+}
+
+function drawLineChart(ctx, canvas, labels, data, color, label, goalVal) {
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.offsetWidth || 320;
+  const H = 180;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+
+  const pad = { top:16, right:16, bottom:32, left:40 };
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
+
+  const minVal = Math.min(...data, goalVal || Infinity) - 1;
+  const maxVal = Math.max(...data) + 1;
+  const range = maxVal - minVal || 1;
+
+  const xStep = labels.length > 1 ? cw / (labels.length - 1) : cw;
+
+  // Background
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0, 0, W, H);
+
+  // Goal line
+  if (goalVal) {
+    const gy = pad.top + ch - ((goalVal - minVal) / range) * ch;
+    ctx.save();
+    ctx.strokeStyle = '#00e87a';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, gy);
+    ctx.lineTo(pad.left + cw, gy);
+    ctx.stroke();
+    ctx.fillStyle = '#00e87a';
+    ctx.font = '10px DM Mono';
+    ctx.fillText('Obiettivo', pad.left + 4, gy - 4);
+    ctx.restore();
+  }
+
+  // Grid lines
+  ctx.strokeStyle = '#2a2a2a';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (ch / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(pad.left + cw, y);
+    ctx.stroke();
+    const val = (maxVal - (range / 4) * i).toFixed(1);
+    ctx.fillStyle = '#555';
+    ctx.font = '10px DM Mono';
+    ctx.textAlign = 'right';
+    ctx.fillText(val, pad.left - 4, y + 3);
+  }
+
+  // Line gradient
+  const grad = ctx.createLinearGradient(pad.left, 0, pad.left + cw, 0);
+  grad.addColorStop(0, color + '88');
+  grad.addColorStop(1, color);
+
+  // Fill under line
+  ctx.beginPath();
+  data.forEach((val, i) => {
+    const x = pad.left + i * xStep;
+    const y = pad.top + ch - ((val - minVal) / range) * ch;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.lineTo(pad.left + (data.length - 1) * xStep, pad.top + ch);
+  ctx.lineTo(pad.left, pad.top + ch);
+  ctx.closePath();
+  ctx.fillStyle = color + '18';
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  data.forEach((val, i) => {
+    const x = pad.left + i * xStep;
+    const y = pad.top + ch - ((val - minVal) / range) * ch;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Dots + labels
+  data.forEach((val, i) => {
+    const x = pad.left + i * xStep;
+    const y = pad.top + ch - ((val - minVal) / range) * ch;
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 10px DM Sans';
+    ctx.textAlign = 'center';
+    ctx.fillText(val, x, y - 8);
+  });
+
+  // X labels
+  ctx.fillStyle = '#555';
+  ctx.font = '10px DM Mono';
+  labels.forEach((l, i) => {
+    const x = pad.left + i * xStep;
+    ctx.textAlign = 'center';
+    ctx.fillText(l, x, H - 8);
+  });
+
+  return true;
+}
+
+
 // Set today's date as default
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('weight-date').value = today;
@@ -1053,6 +1296,9 @@ buildExercises(exercisesB, 'exercises-B', 'B');
 buildExercises(exercisesC, 'exercises-C', 'C');
 renderWeightHistory();
 renderRunHistory();
+updateOverview();
+setTimeout(renderWeightChart, 100);
+
 </script>
 </body>
 </html>
