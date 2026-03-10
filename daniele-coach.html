@@ -823,6 +823,7 @@ const exercisesB = [
   {name:'Rematore Manubri', sets:'3×10', note:'', key:'rematore'},
   {name:'Alzate Laterali', sets:'3×12', note:'', key:'alzate'},
   {name:'Tricipiti Cavo', sets:'3×12', note:'', key:'tricipiti'},
+  {name:'Nordic Hamstring Curl', sets:'2×8', note:'Eccentrica 4 secondi — prevenzione femorali gold standard', key:'nordic'},
   {name:'Dead Bug', sets:'3×10 per lato', note:'CORE — alla fine', key:'deadbug'},
 ];
 
@@ -982,6 +983,26 @@ function buildExercises(exercises, containerId, scheda) {
     card.className = 'exercise-card';
     card.style.position = 'relative';
     card.style.borderColor = color + '44';
+    card.setAttribute('draggable', 'true');
+    card.setAttribute('data-idx', idx);
+    card.setAttribute('data-scheda', scheda);
+
+    // Drag events
+    card.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', idx);
+      card.style.opacity = '0.4';
+    });
+    card.addEventListener('dragend', () => { card.style.opacity = '1'; });
+    card.addEventListener('dragover', (e) => { e.preventDefault(); card.style.borderColor = color; });
+    card.addEventListener('dragleave', () => { card.style.borderColor = color + '44'; });
+    card.addEventListener('drop', (e) => {
+      e.preventDefault();
+      card.style.borderColor = color + '44';
+      const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+      const toIdx = idx;
+      if (fromIdx !== toIdx) moveExercise(scheda, fromIdx, toIdx);
+    });
+
     card.innerHTML = `
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
         <div style="flex:1;min-width:0;">
@@ -991,7 +1012,13 @@ function buildExercises(exercises, containerId, scheda) {
             style="background:transparent;border:none;border-bottom:1px solid ${color};color:var(--text);font-size:15px;font-weight:700;width:100%;padding:2px 0;outline:none;font-family:inherit;"
           />
         </div>
-        <button onclick="deleteExercise('${scheda}',${idx})" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;" title="Elimina">×</button>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+          <div style="display:flex;flex-direction:column;gap:2px;align-items:center;">
+            <button onclick="moveExercise('${scheda}',${idx},${idx-1})" ${idx===0?'disabled':''} style="background:none;border:none;color:${idx===0?'var(--border)':color};font-size:13px;cursor:${idx===0?'default':'pointer'};padding:0;line-height:1;" title="Sposta su">▲</button>
+            <button onclick="moveExercise('${scheda}',${idx},${idx+1})" ${idx===exList.length-1?'disabled':''} style="background:none;border:none;color:${idx===exList.length-1?'var(--border)':color};font-size:13px;cursor:${idx===exList.length-1?'default':'pointer'};padding:0;line-height:1;" title="Sposta giu">▼</button>
+          </div>
+          <button onclick="deleteExercise('${scheda}',${idx})" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:0 2px;line-height:1;" title="Elimina">×</button>
+        </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
         <span style="font-size:11px;color:var(--text3);">Serie/Rep:</span>
@@ -1037,6 +1064,15 @@ function buildExercises(exercises, containerId, scheda) {
   addBtn.style.cssText = 'width:100%;margin-top:12px;padding:12px;background:var(--surface2);border:2px dashed var(--accent);border-radius:12px;color:var(--accent);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:1px;';
   addBtn.onclick = () => addExercise(scheda);
   container.appendChild(addBtn);
+}
+
+function moveExercise(scheda, fromIdx, toIdx) {
+  const exList = getSchedaExercises(scheda);
+  if (toIdx < 0 || toIdx >= exList.length) return;
+  const moved = exList.splice(fromIdx, 1)[0];
+  exList.splice(toIdx, 0, moved);
+  setSchedaData(scheda, exList);
+  buildExercises([], 'exercises-' + scheda, scheda);
 }
 
 function updateExField(scheda, idx, field, value) {
