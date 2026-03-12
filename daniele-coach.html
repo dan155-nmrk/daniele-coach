@@ -596,7 +596,7 @@
       <div class="race-timing">
         <div class="race-time-row">
           <div class="race-time">-60 min</div>
-          <div class="race-action">Colazione solida — riso, avena, banana</div>
+          <div class="race-action">Colazione solida — riso, avena</div>
           <div class="race-carbs">~80g carbo</div>
         </div>
         <div class="race-time-row">
@@ -649,7 +649,7 @@
     <!-- DEFICIT CALORICO -->
     <div class="section-title">🔥 Deficit Calorico</div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;">
-      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Inserisci mangiato e consumato ogni giorno</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:4px;">Basale fisso <span style="color:var(--green);font-weight:700">1800 kcal</span> + attività Zepp = consumato totale</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
         <input class="log-input" type="date" id="deficit-date" style="width:100%" />
         <button class="log-btn" onclick="saveDeficit()" style="width:100%">+ Salva</button>
@@ -660,8 +660,8 @@
           <input class="log-input" type="number" id="deficit-eaten" placeholder="es. 2200" style="width:100%" />
         </div>
         <div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">🔥 Consumato (kcal)</div>
-          <input class="log-input" type="number" id="deficit-burned" placeholder="es. 2600" style="width:100%" />
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">🔥 Attività Zepp (kcal)</div>
+          <input class="log-input" type="number" id="deficit-burned" placeholder="es. 400" style="width:100%" />
         </div>
       </div>
       <div id="deficit-stats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;"></div>
@@ -1386,13 +1386,16 @@ document.getElementById('deficit-date').value = today;
 // ===== DEFICIT CALORICO =====
 function getDeficits() { return getStore('dan_deficits'); }
 
+const BASALE = 1800;
+
 function saveDeficit() {
   const date = document.getElementById('deficit-date').value;
   const eaten = document.getElementById('deficit-eaten').value;
-  const burned = document.getElementById('deficit-burned').value;
-  if (!date || !eaten || !burned) return;
+  const activity = document.getElementById('deficit-burned').value;
+  if (!date || !eaten || !activity) return;
+  const burned = BASALE + parseInt(activity);
   let deficits = getDeficits().filter(d => d.date !== date);
-  deficits.unshift({ date, eaten: parseInt(eaten), burned: parseInt(burned) });
+  deficits.unshift({ date, eaten: parseInt(eaten), burned, activity: parseInt(activity) });
   deficits.sort((a,b) => b.date.localeCompare(a.date));
   setStore('dan_deficits', deficits);
   document.getElementById('deficit-eaten').value = '';
@@ -1440,9 +1443,10 @@ function renderDeficit() {
   container.innerHTML = deficits.slice(0,10).map(d => {
     const def = d.burned - d.eaten;
     const color = def >= 0 ? 'var(--green)' : '#ff6b6b';
+    const actStr = d.activity !== undefined ? `⚡${d.activity}` : `🔥${d.burned}`;
     return `<div class="log-entry">
       <span class="log-entry-date">${d.date.slice(5)}</span>
-      <span style="font-size:12px;color:var(--text2)">🍽 ${d.eaten} · 🔥 ${d.burned}</span>
+      <span style="font-size:12px;color:var(--text2)">🍽 ${d.eaten} · ${actStr} · tot ${d.burned}</span>
       <span style="font-size:13px;font-weight:700;color:${color}">${def >= 0 ? '-' : '+'}${Math.abs(def)}</span>
       <button onclick="deleteDeficit('${d.date}')" style="background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0 4px;">×</button>
     </div>`;
