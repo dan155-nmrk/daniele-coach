@@ -545,9 +545,12 @@
         <input class="log-input" type="number" id="run-km" placeholder="km" step="0.1" style="width:100%" />
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center;">
-        <input class="log-input" type="text" id="run-pace" placeholder="passo mm:ss" style="width:100%" />
+        <input class="log-input" type="number" id="run-dplus" placeholder="D+ dislivello (m)" style="width:100%" />
         <input class="log-input" type="number" id="run-fc" placeholder="FC media" style="width:100%" />
         <button class="log-btn" onclick="saveRun()">+</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:8px;">
+        <input class="log-input" type="text" id="run-pace" placeholder="passo mm:ss" style="width:100%" />
       </div>
       <div class="log-history" id="run-history"></div>
     </div>
@@ -1224,15 +1227,16 @@ function saveRun() {
   const km = document.getElementById('run-km').value;
   const pace = document.getElementById('run-pace').value;
   const fc = document.getElementById('run-fc').value;
+  const dplus = document.getElementById('run-dplus').value;
   if (!date || !km) return;
   const runs = getRuns();
-  runs.unshift({ date, km: parseFloat(km), pace, fc: fc ? parseInt(fc) : null });
+  runs.unshift({ date, km: parseFloat(km), pace, fc: fc ? parseInt(fc) : null, dplus: dplus ? parseInt(dplus) : null });
   setStore('dan_runs', runs);
   document.getElementById('run-km').value = '';
   document.getElementById('run-pace').value = '';
   document.getElementById('run-fc').value = '';
+  document.getElementById('run-dplus').value = '';
   renderRunHistory();
-  renderKmChart(currentKmView);
 }
 
 function renderRunHistory() {
@@ -1241,8 +1245,8 @@ function renderRunHistory() {
   if (!runs.length) { container.innerHTML = '<p style="color:var(--text3);font-size:13px;margin-top:8px">Nessuna uscita ancora.</p>'; return; }
   container.innerHTML = runs.slice(0,15).map((r, i) => `
     <div class="log-entry">
-      <span class="log-entry-date">${r.date}</span>
-      <span class="log-entry-val">${r.km}km${r.pace ? ` · ${r.pace}/km` : ''}</span>
+      <span class="log-entry-date">${r.date.slice(5)}</span>
+      <span class="log-entry-val">${r.km}km${r.dplus ? ` · D+${r.dplus}m` : ''}${r.pace ? ` · ${r.pace}/km` : ''}</span>
       <span style="font-size:12px;color:${r.fc > 150 ? '#ff6b6b' : 'var(--green)'}">${r.fc ? `♥ ${r.fc}` : ''}</span>
       <button onclick="deleteRun(${i})" style="background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:0 4px;line-height:1" title="Elimina">×</button>
     </div>
