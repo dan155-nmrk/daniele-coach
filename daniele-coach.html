@@ -733,10 +733,10 @@ const weeks = [
       {d:'Lunedì 16', acts:['gym','run'], notes:'Scheda A + 28\' FC <130 bpm'},
       {d:'Martedì 17', acts:['bike'], notes:'1h15\' Z2'},
       {d:'Mercoledì 18', acts:['gym'], notes:'Scheda B'},
-      {d:'Giovedì 19', acts:['run'], notes:'40\' progressivo più deciso'},
+      {d:'Giovedì 19', acts:['run'], notes:'15km / D+546m / 1h59\' / FC 145 ✅'},
       {d:'Venerdì 20', acts:['gym'], notes:'Scheda C'},
-      {d:'Sabato 21', acts:['run'], notes:'15km / FC <150 / D+200m'},
-      {d:'Domenica 22', acts:['rest'], notes:'Stretching + mobilità anche'},
+      {d:'Sabato 21', acts:['rest'], notes:'TFA — giornata intera'},
+      {d:'Domenica 22', acts:['run'], notes:'Yoga o corsa Z2 30\' — a scelta'},
     ]
   },
   {
@@ -870,6 +870,32 @@ function showSection(id) {
 function getChecked() { try { return JSON.parse(localStorage.getItem('dan_checked')) || {}; } catch(e) { return {}; } }
 function setChecked(d) { try { localStorage.setItem('dan_checked', JSON.stringify(d)); } catch(e) {} }
 
+function getNoteOverride(weekN, dayI) {
+  const overrides = JSON.parse(localStorage.getItem('dan_notes') || '{}');
+  return overrides[`w${weekN}_d${dayI}`] || null;
+}
+
+function editNote(el, weekN, dayI) {
+  if (el.querySelector('input')) return;
+  const current = el.textContent;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = current;
+  input.style.cssText = 'width:100%;background:var(--surface2);border:1px solid var(--accent);border-radius:6px;padding:4px 8px;color:var(--text1);font-size:13px;';
+  el.innerHTML = '';
+  el.appendChild(input);
+  input.focus();
+  input.select();
+  function save() {
+    const overrides = JSON.parse(localStorage.getItem('dan_notes') || '{}');
+    overrides[`w${weekN}_d${dayI}`] = input.value;
+    localStorage.setItem('dan_notes', JSON.stringify(overrides));
+    el.textContent = input.value;
+  }
+  input.addEventListener('blur', save);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { save(); input.blur(); } });
+}
+
 function toggleCheck(weekN, dayI, el) {
   const checked = getChecked();
   const key = `w${weekN}_d${dayI}`;
@@ -932,7 +958,7 @@ function buildWeeks() {
               <div class="day-activities">
                 ${day.acts.map(a => `<span class="tag ${a}">${a==='gym'?'💪 Palestra':a==='run'?'🏃 Corsa':a==='bike'?'🚴 Bici':a==='race'?'🏔️ GARA':'😴 Riposo'}</span>`).join('')}
               </div>
-              <div class="day-note">${day.notes}</div>
+              <div class="day-note" onclick="editNote(this, ${w.n}, ${i})" style="cursor:pointer" title="Tap per modificare">${getNoteOverride(w.n, i) || day.notes}</div>
             </div>
           </div>
         `}).join('')}
