@@ -687,6 +687,13 @@
       <canvas id="weight-chart" height="180" style="width:100%;margin-bottom:4px;"></canvas>
     </div>
 
+    <!-- TARGET PESO -->
+    <div class="progress-log">
+      <h3>🎯 Target Peso — Obiettivo 65kg</h3>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Tap per segnare raggiunto → mancato → reset</p>
+      <div id="weight-targets"></div>
+    </div>
+
     <!-- LOG PESO -->
     <div class="progress-log">
       <h3>⚖️ Peso — Inserimento rapido</h3>
@@ -713,6 +720,50 @@
 </main>
 
 <script>
+// ===== TARGET PESO =====
+const weightTargets = [
+  { date: '30 mar', target: 70.9 },
+  { date: '15 apr', target: 69.5 },
+  { date: '30 apr', target: 68.7 },
+  { date: '15 mag', target: 67.9 },
+  { date: '30 mag', target: 67.1 },
+  { date: '15 giu', target: 66.3 },
+  { date: '30 giu', target: 65.6 },
+  { date: '15 lug', target: 65.0 },
+];
+
+function renderWeightTargets() {
+  const container = document.getElementById('weight-targets');
+  const saved = JSON.parse(localStorage.getItem('dan_weight_targets') || '{}');
+  container.innerHTML = weightTargets.map((t, i) => {
+    const status = saved[i];
+    const isOk = status === 'ok';
+    const isNo = status === 'no';
+    const accentColor = isOk ? '#aaff00' : isNo ? '#ff6b6b' : 'var(--border)';
+    const bgColor = isOk ? 'rgba(170,255,0,0.08)' : isNo ? 'rgba(255,107,107,0.08)' : 'var(--surface2)';
+    const icon = isOk ? '✅' : isNo ? '❌' : '○';
+    const isFinal = i === weightTargets.length - 1;
+    return `
+    <div onclick="cycleTarget(${i})" style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${bgColor};border-left:3px solid ${accentColor};border-radius:0 8px 8px 0;margin-bottom:6px;cursor:pointer;transition:all 0.2s;">
+      <div style="font-size:18px;min-width:24px;text-align:center">${icon}</div>
+      <div style="flex:1">
+        <div style="font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">${t.date}</div>
+        <div style="font-family:'Bebas Neue';font-size:22px;color:${isOk ? '#aaff00' : isNo ? '#ff6b6b' : 'var(--text1)'};line-height:1.1">${t.target} <span style="font-size:14px">kg</span>${isFinal ? ' 🎯' : ''}</div>
+      </div>
+      ${isOk ? `<div style="font-size:10px;color:#aaff00;font-weight:700">RAGGIUNTO</div>` : isNo ? `<div style="font-size:10px;color:#ff6b6b;font-weight:700">MANCATO</div>` : `<div style="font-size:10px;color:var(--text3)">IN CORSO</div>`}
+    </div>`;
+  }).join('');
+}
+
+function cycleTarget(i) {
+  const saved = JSON.parse(localStorage.getItem('dan_weight_targets') || '{}');
+  if (!saved[i]) saved[i] = 'ok';
+  else if (saved[i] === 'ok') saved[i] = 'no';
+  else delete saved[i];
+  localStorage.setItem('dan_weight_targets', JSON.stringify(saved));
+  renderWeightTargets();
+}
+
 // ===== DATA =====
 const weeks = [
   {
@@ -742,71 +793,71 @@ const weeks = [
   {
     n:3, dates:'22–28 Mar', focus:'Carico', type:'load',
     days:[
-      {d:'Lunedì 23', acts:['gym','run'], notes:'Scheda A + 30\' FC <135'},
-      {d:'Martedì 24', acts:['bike'], notes:'1h30\' Z2 con 2×10\' Z3'},
+      {d:'Lunedì 23', acts:['gym','run'], notes:'Scheda A + 30\' Z2 FC<125'},
+      {d:'Martedì 24', acts:['bike'], notes:'1h15\' Z2 FC<130'},
       {d:'Mercoledì 25', acts:['gym'], notes:'Scheda B'},
-      {d:'Giovedì 26', acts:['run'], notes:'45\' — ultimi 15\' a 5:40/km se femorali ok'},
-      {d:'Venerdì 27', acts:['gym'], notes:'Scheda C'},
-      {d:'Sabato 28', acts:['run'], notes:'17km / D+500m / passo libero — cerca salite'},
-      {d:'Domenica 29', acts:['rest'], notes:'Camminata 30\' + stretching'},
+      {d:'Giovedì 26', acts:['run'], notes:'45\' progressivo'},
+      {d:'Venerdì 27', acts:['gym'], notes:'Scheda C + pesata ⚖️ — sera carbo alti +200kcal'},
+      {d:'Sabato 28', acts:['run'], notes:'17km / D+500m / FC<150 — ZERO DEFICIT OGGI'},
+      {d:'Domenica 29', acts:['rest'], notes:'Riposo — proteine alte per recupero'},
     ]
   },
   {
     n:4, dates:'29 Mar–4 Apr', focus:'🔄 SCARICO', type:'rest',
     days:[
-      {d:'Lunedì 30', acts:['gym','run'], notes:'Scheda A -20% pesi + 20\' leggera'},
-      {d:'Martedì 31', acts:['bike'], notes:'45\' solo Z2'},
+      {d:'Lunedì 30', acts:['gym','run'], notes:'Scheda A -20% pesi + 20\' Z2 leggera'},
+      {d:'Martedì 31', acts:['bike'], notes:'45\' Z2 FC<125'},
       {d:'Mercoledì 1 Apr', acts:['gym'], notes:'Scheda B -20% pesi'},
-      {d:'Giovedì 2', acts:['run'], notes:'30\' leggera FC <125'},
-      {d:'Venerdì 3', acts:['gym'], notes:'Scheda C -20% pesi'},
-      {d:'Sabato 4', acts:['run'], notes:'10km / D+150m / FC <140'},
-      {d:'Domenica 5', acts:['rest'], notes:'Riposo totale — meriti di riposarti'},
+      {d:'Giovedì 2', acts:['run'], notes:'30\' Z2 leggera FC<125'},
+      {d:'Venerdì 3', acts:['gym'], notes:'Scheda C -20% pesi + pesata ⚖️'},
+      {d:'Sabato 4', acts:['run'], notes:'10km / D+150m / Z2 pura FC<130'},
+      {d:'Domenica 5', acts:['rest'], notes:'Riposo totale'},
     ]
   },
   {
     n:5, dates:'5–11 Apr', focus:'Specifico Trail', type:'load',
     days:[
-      {d:'Lunedì 6', acts:['gym','run'], notes:'Scheda A + 30\' FC <135'},
-      {d:'Martedì 7', acts:['bike'], notes:'1h30\' Z2/Z3'},
+      {d:'Lunedì 6', acts:['gym','run'], notes:'Scheda A + 30\' Z2 FC<125'},
+      {d:'Martedì 7', acts:['bike'], notes:'1h15\' Z2 FC<130'},
       {d:'Mercoledì 8', acts:['gym'], notes:'Scheda B'},
-      {d:'Giovedì 9', acts:['run'], notes:'Ripetute brevi 6×400mt se femorali ok'},
-      {d:'Venerdì 10', acts:['gym'], notes:'Scheda C'},
-      {d:'Sabato 11', acts:['run'], notes:'19km / D+700m / cerca salite vere'},
-      {d:'Domenica 12', acts:['rest'], notes:'Stretching + gambe su'},
+      {d:'Giovedì 9', acts:['run'], notes:'Ripetute 6×400mt se femorali 100% — altrimenti progressivo'},
+      {d:'Venerdì 10', acts:['gym'], notes:'Scheda C + pesata ⚖️ — sera carbo alti +200kcal'},
+      {d:'Sabato 11', acts:['run'], notes:'19km / D+700m / FC<150 — ZERO DEFICIT OGGI'},
+      {d:'Domenica 12', acts:['rest'], notes:'Riposo — proteine alte per recupero'},
     ]
   },
   {
-    n:6, dates:'12–18 Apr', focus:'Specifico Trail', type:'load',
+    n:6, dates:'12–18 Apr', focus:'Specifico Trail — Carico Massimo', type:'load',
     days:[
-      {d:'Lunedì 13', acts:['gym','run'], notes:'Scheda A + 30\' FC <135'},
-      {d:'Martedì 14', acts:['bike'], notes:'1h Z2'},
+      {d:'Lunedì 13', acts:['gym','run'], notes:'Scheda A + 30\' Z2 FC<125'},
+      {d:'Martedì 14', acts:['bike'], notes:'1h30\' Z2 FC<130'},
       {d:'Mercoledì 15', acts:['gym'], notes:'Scheda B'},
-      {d:'Giovedì 16', acts:['run'], notes:'Ripetute 6×400mt o progressivo'},
-      {d:'Venerdì 17', acts:['gym'], notes:'Scheda C'},
-      {d:'Sabato 18', acts:['run'], notes:'22km / D+900m+ / simula il Mugello — cammina le salite se FC >155'},
-      {d:'Domenica 19', acts:['rest'], notes:'Riposo — gambe su 20\''},
+      {d:'Giovedì 16', acts:['run'], notes:'45\' progressivo — allenati in discesa'},
+      {d:'Venerdì 17', acts:['gym'], notes:'Scheda C + pesata ⚖️ — sera carbo alti +200kcal'},
+      {d:'Sabato 18', acts:['run'], notes:'22km / D+900m+ / DRESS REHEARSAL — zaino+gel+scarpe gara / ZERO DEFICIT OGGI'},
+      {d:'Domenica 19', acts:['rest'], notes:'Riposo totale — proteine alte'},
     ]
   },
   {
-    n:7, dates:'19–25 Apr', focus:'🔄 Scarico Pre-Gara', type:'taper',
+    n:7, dates:'19–25 Apr', focus:'🔄 Tapering Pre-Gara', type:'taper',
     days:[
-      {d:'Lunedì 20', acts:['gym','run'], notes:'Scheda A -30% pesi + 20\' leggera'},
-      {d:'Martedì 21', acts:['bike'], notes:'40\' solo Z2 — gambe fresche'},
-      {d:'Mercoledì 22', acts:['gym'], notes:'Scheda B -30% pesi — leggero'},
-      {d:'Giovedì 23', acts:['run'], notes:'20\' leggera + 4×100mt in scioltezza'},
-      {d:'Venerdì 24', acts:['rest'], notes:'Riposo — prepara zaino e gel'},
-      {d:'Sabato 25', acts:['run'], notes:'10km / D+200m / leggero — gambe fresche per la gara'},
+      {d:'Lunedì 20', acts:['gym','run'], notes:'Scheda A -30% pesi + 20\' Z2 leggera — PIANIFICHIAMO SCHEDE W9'},
+      {d:'Martedì 21', acts:['bike'], notes:'45\' Z2 leggera FC<125'},
+      {d:'Mercoledì 22', acts:['gym'], notes:'Scheda B -30% pesi'},
+      {d:'Giovedì 23', acts:['run'], notes:'30\' Z2 gambe sciolte'},
+      {d:'Venerdì 24', acts:['gym'], notes:'Scheda C -30% pesi + pesata ⚖️'},
+      {d:'Sabato 25', acts:['run'], notes:'10km / D+200m / Z2 — gambe fresche'},
       {d:'Domenica 26', acts:['rest'], notes:'Riposo totale. Idratati. Dormi bene.'},
     ]
   },
   {
     n:8, dates:'27 Apr–2 Mag', focus:'🏔️ GARA — MUGELLO', type:'race',
     days:[
-      {d:'Lunedì 28 Apr', acts:['rest'], notes:'Riposo. Mangia bene. Carbo alti.'},
-      {d:'Martedì 29', acts:['rest'], notes:'Riposo. Idratazione. Prepara tutto.'},
-      {d:'Mercoledì 30', acts:['run'], notes:'10\' gambe — niente di più'},
-      {d:'Giovedì 1 Mag', acts:['rest'], notes:'Riposo totale. Pasta a pranzo.'},
-      {d:'Venerdì 2 Mag', acts:['race'], notes:'🏔️ TRAIL DEL MUGELLO 24km/1280m+ — OBIETTIVO 2:45-3:00'},
+      {d:'Lunedì 28 Apr', acts:['rest'], notes:'Riposo. Carbo alti. Idratazione.'},
+      {d:'Martedì 29', acts:['rest'], notes:'Riposo. Prepara zaino e gel.'},
+      {d:'Mercoledì 30', acts:['run'], notes:'15\' gambe sciolte + 4 allunghi — niente di più'},
+      {d:'Giovedì 1 Mag', acts:['rest'], notes:'Riposo totale. Pasta a pranzo. Dormi presto.'},
+      {d:'Venerdì 2 Mag', acts:['race'], notes:'🏔️ TRAIL DEL MUGELLO 24km/1280m+ — OBIETTIVO 2:45-3:00 / Top 30'},
     ]
   },
 ];
@@ -1449,18 +1500,20 @@ function renderDeficit() {
     const avgDeficit = Math.round(last7.reduce((s,d) => s + (d.burned - d.eaten), 0) / last7.length);
     const avgEaten = Math.round(last7.reduce((s,d) => s + d.eaten, 0) / last7.length);
     const weekTotal = last7.reduce((s,d) => s + (d.burned - d.eaten), 0);
+    const totalAvg = Math.round(deficits.reduce((s,d) => s + (d.burned - d.eaten), 0) / deficits.length);
     const dc = avgDeficit >= 0 ? 'var(--green)' : '#ff6b6b';
     const wc = weekTotal >= 0 ? 'var(--green)' : '#ff6b6b';
+    const tc = totalAvg >= 0 ? 'var(--green)' : '#ff6b6b';
     statsEl.innerHTML = `
       <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center">
-        <div style="font-size:10px;color:var(--text3);margin-bottom:4px">MEDIA DEFICIT</div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px">MEDIA 7gg</div>
         <div style="font-family:'Bebas Neue';font-size:26px;color:${dc}">${avgDeficit >= 0 ? '-' : '+'}${Math.abs(avgDeficit)}</div>
         <div style="font-size:10px;color:var(--text3)">kcal/giorno</div>
       </div>
       <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center">
-        <div style="font-size:10px;color:var(--text3);margin-bottom:4px">MEDIA MANGIATO</div>
-        <div style="font-family:'Bebas Neue';font-size:26px;color:var(--accent)">${avgEaten}</div>
-        <div style="font-size:10px;color:var(--text3)">kcal/giorno</div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px">MEDIA TOTALE</div>
+        <div style="font-family:'Bebas Neue';font-size:26px;color:${tc}">${totalAvg >= 0 ? '-' : '+'}${Math.abs(totalAvg)}</div>
+        <div style="font-size:10px;color:var(--text3)">${deficits.length} giorni</div>
       </div>
       <div style="background:var(--surface2);border-radius:8px;padding:10px;text-align:center">
         <div style="font-size:10px;color:var(--text3);margin-bottom:4px">TOTALE SETT.</div>
@@ -1599,6 +1652,7 @@ buildExercises(exercisesA, 'exercises-A', 'A');
 buildExercises(exercisesB, 'exercises-B', 'B');
 buildExercises(exercisesC, 'exercises-C', 'C');
 renderWeightHistory();
+renderWeightTargets();
 renderRunHistory();
 renderDeficit();
 updateOverview();
