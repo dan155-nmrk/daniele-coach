@@ -689,7 +689,7 @@
 
     <!-- TARGET PESO -->
     <div class="progress-log">
-      <h3>🎯 Target Peso — Obiettivo 65kg</h3>
+      <h3>🎯 Target Peso — Sfida 90 giorni → 65kg entro 24 luglio</h3>
       <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Tap per segnare raggiunto → mancato → reset</p>
       <div id="weight-targets"></div>
     </div>
@@ -724,12 +724,19 @@
 const weightTargets = [
   { date: '30 mar', target: 70.9 },
   { date: '15 apr', target: 69.5 },
-  { date: '30 apr', target: 68.7 },
-  { date: '15 mag', target: 67.9 },
-  { date: '30 mag', target: 67.1 },
-  { date: '15 giu', target: 66.3 },
-  { date: '30 giu', target: 65.6 },
-  { date: '15 lug', target: 65.0 },
+  { date: 'Ven 1 mag', target: 69.8 },
+  { date: 'Ven 8 mag', target: 69.4 },
+  { date: 'Ven 15 mag', target: 69.0 },
+  { date: 'Ven 22 mag', target: 68.6 },
+  { date: 'Ven 29 mag', target: 68.2 },
+  { date: 'Ven 5 giu', target: 67.8 },
+  { date: 'Ven 12 giu', target: 67.4 },
+  { date: 'Ven 19 giu', target: 67.0 },
+  { date: 'Ven 26 giu', target: 66.6 },
+  { date: 'Ven 3 lug', target: 66.2 },
+  { date: 'Ven 10 lug', target: 65.8 },
+  { date: 'Ven 17 lug', target: 65.4 },
+  { date: 'Ven 24 lug', target: 65.0 },
 ];
 
 function renderWeightTargets() {
@@ -820,9 +827,9 @@ const weeks = [
       {d:'Lunedì 6', acts:['gym','run'], notes:'Scheda A + 30\' Z2 FC<125'},
       {d:'Martedì 7', acts:['bike'], notes:'1h15\' Z2 FC<130'},
       {d:'Mercoledì 8', acts:['gym'], notes:'Scheda B'},
-      {d:'Giovedì 9', acts:['run'], notes:'Ripetute 6×400mt se femorali 100% — altrimenti progressivo'},
+      {d:'Giovedì 9', acts:['run'], notes:'6-8×400m asfalto 4:45-5:00/km — recupero 90\'\' camminando — FC max 165'},
       {d:'Venerdì 10', acts:['gym'], notes:'Scheda C + pesata ⚖️ — sera carbo alti +200kcal'},
-      {d:'Sabato 11', acts:['run'], notes:'19km / D+700m / FC<150 — ZERO DEFICIT OGGI'},
+      {d:'Sabato 11', acts:['run'], notes:'19km / D+700m — 10km Z3(126-143) → 5km Z4(144-161) → 4km Z3 — ZERO DEFICIT OGGI'},
       {d:'Domenica 12', acts:['rest'], notes:'Riposo — proteine alte per recupero'},
     ]
   },
@@ -832,10 +839,10 @@ const weeks = [
       {d:'Lunedì 13', acts:['gym','run'], notes:'Scheda A + 30\' Z2 FC<125'},
       {d:'Martedì 14', acts:['bike'], notes:'1h30\' Z2 FC<130'},
       {d:'Mercoledì 15', acts:['gym'], notes:'Scheda B'},
-      {d:'Giovedì 16', acts:['run'], notes:'45\' progressivo — allenati in discesa'},
+      {d:'Giovedì 16', acts:['run'], notes:'4×800m sterrato piano — recupero 2\' camminando — FC 155-165'},
       {d:'Venerdì 17', acts:['gym'], notes:'Scheda C + pesata ⚖️ — sera carbo alti +200kcal'},
-      {d:'Sabato 18', acts:['run'], notes:'22km / D+900m+ / DRESS REHEARSAL — zaino+gel+scarpe gara / ZERO DEFICIT OGGI'},
-      {d:'Domenica 19', acts:['rest'], notes:'Riposo totale — proteine alte'},
+      {d:'Sabato 18', acts:['run'], notes:'22km / D+900m+ / DRESS REHEARSAL — 5km Z2-Z3 → 12km Z4(144-161) → 5km Z3 — zaino+gel+scarpe gara / ZERO DEFICIT OGGI'},
+      {d:'Domenica 19', acts:['rest'], notes:'Riposo totale — proteine alte — monitora tendine'},
     ]
   },
   {
@@ -1029,11 +1036,13 @@ const schedaColors = { A: '#aaff00', B: '#00d4ff', C: '#ffee00' };
 function showScheda(id) {
   document.querySelectorAll('.scheda-tab').forEach(t => {
     t.classList.remove('active-A','active-B','active-C');
+    t.style.background = '';
+    t.style.color = '';
+    t.style.borderColor = '';
   });
   document.querySelectorAll('.scheda-content').forEach(c => c.classList.remove('active'));
   event.target.classList.add('active-' + id);
   document.getElementById('scheda-'+id).classList.add('active');
-  // aggiorna accent color per questa scheda
   document.documentElement.style.setProperty('--scheda-color', schedaColors[id]);
 }
 
@@ -1130,12 +1139,12 @@ function buildExercises(exercises, containerId, scheda) {
           return `
           <div>
             <div style="font-size:10px;color:var(--text3);margin-bottom:3px;font-family:'DM Mono'">${w}</div>
-            <input class="weight-input" style="width:100%;font-size:12px;padding:5px 7px;border-color:var(--border)"
+            <input class="weight-input" style="width:100%;font-size:12px;padding:5px 7px;border-color:var(--border);"
               type="number" placeholder="kg"
               value="${currVal}"
               onchange="saveWeight2('${ex.key}','${w}',this.value);buildExercises([],'${containerId}','${scheda}')"
             />
-            ${suggestion}
+            ${w==='S4' ? `<div style="font-size:9px;color:#ff8c00;margin-top:2px;font-weight:700;">🔄 -20%</div>` : suggestion}
           </div>
         `}).join('')}
       </div>
