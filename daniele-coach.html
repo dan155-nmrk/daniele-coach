@@ -858,13 +858,110 @@ const weeks = [
     ]
   },
   {
-    n:8, dates:'27 Apr–2 Mag', focus:'🏔️ GARA — MUGELLO', type:'race',
+    n:8, dates:'27 Apr–2 Mag', focus:'🏔️ GARA — MUGELLO ✅', type:'race',
     days:[
       {d:'Lunedì 28 Apr', acts:['rest'], notes:'Riposo. Carbo alti. Idratazione.'},
       {d:'Martedì 29', acts:['rest'], notes:'Riposo. Prepara zaino e gel.'},
-      {d:'Mercoledì 30', acts:['run'], notes:'15\' gambe sciolte + 4 allunghi — niente di più'},
+      {d:'Mercoledì 30', acts:['run'], notes:'15\' gambe sciolte + 4 allunghi'},
       {d:'Giovedì 1 Mag', acts:['rest'], notes:'Riposo totale. Pasta a pranzo. Dormi presto.'},
-      {d:'Venerdì 2 Mag', acts:['race'], notes:'🏔️ TRAIL DEL MUGELLO 24km/1280m+ — OBIETTIVO 2:45-3:00 / Top 30'},
+      {d:'Venerdì 2 Mag', acts:['race'], notes:'🏔️ TRAIL DEL MUGELLO 24km/1291m+ — 3h37\'05\' — FC 163 — ✅ COMPLETATO'},
+    ]
+  },
+  {
+    n:9, dates:'3–10 Mag', focus:'🔄 Recupero Post Mugello', type:'rest',
+    days:[
+      {d:'Dom 3', acts:['rest'], notes:'Riposo totale. Mangia a mantenimento.'},
+      {d:'Lun 4', acts:['rest'], notes:'Riposo. Stretching leggero.'},
+      {d:'Mar 5', acts:['rest'], notes:'Camminata 20-30\' se ok'},
+      {d:'Mer 6', acts:['rest'], notes:'Riposo o camminata leggera'},
+      {d:'Gio 7', acts:['gym'], notes:'Palestra leggera -30% — solo upper body'},
+      {d:'Ven 8', acts:['rest'], notes:'Riposo — pesata ⚖️'},
+      {d:'Sab 9', acts:['run'], notes:'Corsa Z2 20-30\' pianura — primo rientro'},
+      {d:'Dom 10', acts:['rest'], notes:'Riposo attivo'},
+    ]
+  },
+  {
+    n:10, dates:'11–17 Mag', focus:'Ripresa', type:'load',
+    days:[
+      {d:'Lun 11', acts:['gym','run'], notes:'Palestra A + Z2 40\' FC<125'},
+      {d:'Mar 12', acts:['bike'], notes:'Bici 1h Z2 FC<130'},
+      {d:'Mer 13', acts:['gym'], notes:'Palestra B'},
+      {d:'Gio 14', acts:['run'], notes:'Corsa Z2 50\' / 8km'},
+      {d:'Ven 15', acts:['gym'], notes:'Palestra C + pesata ⚖️'},
+      {d:'Sab 16', acts:['run'], notes:'Lungo 15km / D+300m / Z2-Z3 FC<145'},
+      {d:'Dom 17', acts:['rest'], notes:'Riposo — proteine alte'},
+    ]
+  },
+  {
+    n:11, dates:'18–24 Mag', focus:'Costruzione', type:'load',
+    days:[
+      {d:'Lun 18', acts:['gym','run'], notes:'Palestra A + Z2 45\''},
+      {d:'Mar 19', acts:['bike'], notes:'Bici 1h15\' Z2 FC<130'},
+      {d:'Mer 20', acts:['gym'], notes:'Palestra B'},
+      {d:'Gio 21', acts:['run'], notes:'Progressivo 45\' Z2→Z3→Z4'},
+      {d:'Ven 22', acts:['gym'], notes:'Palestra C + pesata ⚖️ — sera carbo alti'},
+      {d:'Sab 23', acts:['run'], notes:'Lungo 20km / D+700m — Z3→Z4 — ZERO DEFICIT'},
+      {d:'Dom 24', acts:['rest'], notes:'Riposo — proteine alte'},
+    ]
+  },
+  {
+    n:12, dates:'25–31 Mag', focus:'Carico', type:'load',
+    days:[
+      {d:'Lun 25', acts:['gym','run'], notes:'Palestra A + Z2 45\''},
+      {d:'Mar 26', acts:['bike'], notes:'Bici 1h15\' Z2 FC<130'},
+      {d:'Mer 27', acts:['gym'], notes:'Palestra B'},
+      {d:'Gio 28', acts:['run'], notes:'4×800m sterrato piano — recupero 2\' — FC 155-165'},
+      {d:'Ven 29', acts:['gym'], notes:'Palestra C + pesata ⚖️ — sera carbo alti'},
+      {d:'Sab 30', acts:['run'], notes:'Lungo 26km / D+1100m — gel x2 — ZERO DEFICIT'},
+      {d:'Dom 31', acts:['rest'], notes:'Riposo totale — proteine alte'},
+    ]
+  },
+  {
+    n:13, dates:'1–7 Giu', focus:'Carico Massimo', type:'load',
+    days:[
+      {d:'Lun 1', acts:['gym'], notes:'Palestra A leggera -20%'},
+      {d:'Mar 2', acts:['run'], notes:'Corsa Z2 40\''},
+      {d:'Mer 3', acts:['gym'], notes:'Palestra B leggera'},
+      {d:'Gio 4', acts:['run'], notes:'Corsa Z2 50\' — niente qualità'},
+      {d:'Ven 5', acts:['rest'], notes:'Riposo — pesata ⚖️'},
+      {d:'Sab 6', acts:['run'], notes:'Lungo 33-35km / D+1700m — SIMULAZIONE ALPS TRAIL — gel ogni 30\' — ZERO DEFICIT'},
+      {d:'Dom 7', acts:['rest'], notes:'Riposo totale — proteine alte'},
+    ]
+  },
+  {
+    n:14, dates:'8–14 Giu', focus:'🔄 Scarico', type:'rest',
+    days:[
+      {d:'Lun 8', acts:['gym'], notes:'Palestra A -30%'},
+      {d:'Mar 9', acts:['bike'], notes:'Bici 45\' Z2'},
+      {d:'Mer 10', acts:['gym'], notes:'Palestra B -30%'},
+      {d:'Gio 11', acts:['run'], notes:'Corsa Z2 30\' leggera'},
+      {d:'Ven 12', acts:['gym'], notes:'Palestra C -30% + pesata ⚖️'},
+      {d:'Sab 13', acts:['run'], notes:'Lungo 15km / D+500m / Z2'},
+      {d:'Dom 14', acts:['rest'], notes:'Riposo attivo'},
+    ]
+  },
+  {
+    n:15, dates:'15–21 Giu', focus:'Tapering Pre Alps Trail', type:'taper',
+    days:[
+      {d:'Lun 15', acts:['gym'], notes:'Palestra A leggera'},
+      {d:'Mar 16', acts:['run'], notes:'Corsa Z2 30\''},
+      {d:'Mer 17', acts:['gym'], notes:'Palestra B leggera'},
+      {d:'Gio 18', acts:['run'], notes:'Corsa Z2 20\' gambe sciolte'},
+      {d:'Ven 19', acts:['rest'], notes:'Riposo — pesata ⚖️'},
+      {d:'Sab 20', acts:['run'], notes:'Corsetta 20\' Z2'},
+      {d:'Dom 21', acts:['rest'], notes:'Riposo totale'},
+    ]
+  },
+  {
+    n:16, dates:'22–28 Giu', focus:'🏔️ GARA — ALPS TRAIL', type:'race',
+    days:[
+      {d:'Lun 22', acts:['rest'], notes:'Camminata 30\'. Carbo alti.'},
+      {d:'Mar 23', acts:['run'], notes:'Corsetta 20\' Z2'},
+      {d:'Mer 24', acts:['rest'], notes:'Stretching e mobilità'},
+      {d:'Gio 25', acts:['rest'], notes:'Riposo totale'},
+      {d:'Ven 26', acts:['rest'], notes:'Riposo — pesata ⚖️ — prepara zaino'},
+      {d:'Sab 27', acts:['rest'], notes:'Carbo alti. Dormi presto.'},
+      {d:'Dom 28 Giu', acts:['race'], notes:'🏔️ ALPS TRAIL 38km / 2500m+ — OBIETTIVO: FINIRLO 💪'},
     ]
   },
 ];
@@ -983,7 +1080,8 @@ function buildWeeks() {
   container.innerHTML = '';
   weeks.forEach(w => {
     const card = document.createElement('div');
-    card.className = 'week-card';
+    // Auto-open W9 onwards, keep W1-W8 collapsed
+    card.className = w.n >= 9 ? 'week-card open' : 'week-card';
     card.setAttribute('data-week', w.n);
     const totalDays = w.days.length;
     const doneDays = w.days.filter((_, i) => checked[`w${w.n}_d${i}`]).length;
