@@ -689,7 +689,7 @@
 
     <!-- TARGET PESO -->
     <div class="progress-log">
-      <h3>🎯 Target Peso — Sfida 90 giorni → 65kg entro 24 luglio</h3>
+      <h3>🎯 Target Peso — Obiettivo 66kg entro 7 agosto</h3>
       <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Tap per segnare raggiunto → mancato → reset</p>
       <div id="weight-targets"></div>
     </div>
@@ -724,19 +724,17 @@
 const weightTargets = [
   { date: '30 mar', target: 70.9 },
   { date: '15 apr', target: 69.5 },
-  { date: 'Ven 1 mag', target: 69.8 },
-  { date: 'Ven 8 mag', target: 69.4 },
-  { date: 'Ven 15 mag', target: 69.0 },
-  { date: 'Ven 22 mag', target: 68.6 },
-  { date: 'Ven 29 mag', target: 68.2 },
-  { date: 'Ven 5 giu', target: 67.8 },
-  { date: 'Ven 12 giu', target: 67.4 },
-  { date: 'Ven 19 giu', target: 67.0 },
-  { date: 'Ven 26 giu', target: 66.6 },
-  { date: 'Ven 3 lug', target: 66.2 },
-  { date: 'Ven 10 lug', target: 65.8 },
-  { date: 'Ven 17 lug', target: 65.4 },
-  { date: 'Ven 24 lug', target: 65.0 },
+  { date: 'Ven 30 mag', target: 70.2 },
+  { date: 'Ven 6 giu', target: 69.8 },
+  { date: 'Ven 13 giu', target: 69.4 },
+  { date: 'Ven 20 giu', target: 69.0 },
+  { date: 'Ven 27 giu', target: 68.6 },
+  { date: 'Ven 4 lug', target: 68.2 },
+  { date: 'Ven 11 lug', target: 67.8 },
+  { date: 'Ven 18 lug', target: 67.4 },
+  { date: 'Ven 25 lug', target: 67.0 },
+  { date: 'Ven 1 ago', target: 66.6 },
+  { date: 'Ven 7 ago', target: 66.0 },
 ];
 
 function renderWeightTargets() {
@@ -881,86 +879,62 @@ const weeks = [
     ]
   },
   {
-    n:10, dates:'11–17 Mag', focus:'Ripresa', type:'load',
+    n:10, dates:'26 Mag–1 Giu', focus:'W10 — Ripresa', type:'load',
     days:[
-      {d:'Lun 11', acts:['gym','run'], notes:'Palestra A + Z2 40\' FC<125'},
-      {d:'Mar 12', acts:['bike'], notes:'Bici 1h Z2 FC<130'},
-      {d:'Mer 13', acts:['gym'], notes:'Palestra B'},
-      {d:'Gio 14', acts:['run'], notes:'Corsa Z2 50\' / 8km'},
-      {d:'Ven 15', acts:['gym'], notes:'Palestra C + pesata ⚖️'},
-      {d:'Sab 16', acts:['run'], notes:'Lungo 15km / D+300m / Z2-Z3 FC<145'},
-      {d:'Dom 17', acts:['rest'], notes:'Riposo — proteine alte'},
+      {d:'Lun 26', acts:['gym','run'], notes:'Palestra A upper + Z2 45\''},
+      {d:'Mar 27', acts:['bike'], notes:'Bici 1h Z2 FC<130'},
+      {d:'Mer 28', acts:['gym'], notes:'Palestra B upper + Nordic Curl + Calf Raise'},
+      {d:'Gio 29', acts:['run'], notes:'🏔️ Lungo 20km / D+700m / FC<150 — cammina tutto quello che serve — gel dopo 1h'},
+      {d:'Ven 30', acts:['rest'], notes:'Riposo — stretching femorali'},
+      {d:'Sab 31', acts:['gym'], notes:'Palestra C upper + Step Down + Wall Sit + Heel Drop'},
+      {d:'Dom 1', acts:['rest'], notes:'Riposo'},
     ]
   },
   {
-    n:11, dates:'18–24 Mag', focus:'Costruzione', type:'load',
+    n:11, dates:'2–8 Giu', focus:'W11 — Costruzione', type:'load',
     days:[
-      {d:'Lun 18', acts:['gym','run'], notes:'Palestra A + Z2 45\''},
-      {d:'Mar 19', acts:['bike'], notes:'Bici 1h15\' Z2 FC<130'},
-      {d:'Mer 20', acts:['gym'], notes:'Palestra B'},
-      {d:'Gio 21', acts:['run'], notes:'Progressivo 45\' Z2→Z3→Z4'},
-      {d:'Ven 22', acts:['gym'], notes:'Palestra C + pesata ⚖️ — sera carbo alti'},
-      {d:'Sab 23', acts:['run'], notes:'Lungo 20km / D+700m — Z3→Z4 — ZERO DEFICIT'},
-      {d:'Dom 24', acts:['rest'], notes:'Riposo — proteine alte'},
+      {d:'Lun 2', acts:['gym','run'], notes:'Palestra A upper + Z2 45\''},
+      {d:'Mar 3', acts:['bike'], notes:'Bici 1h15\' Z2 FC<130'},
+      {d:'Mer 4', acts:['gym'], notes:'Palestra B upper + Nordic Curl + Calf Raise'},
+      {d:'Gio 5', acts:['run'], notes:'🏔️ Lungo 26km / D+1000m / FC<150 — gel x2 — ZERO DEFICIT'},
+      {d:'Ven 6', acts:['rest'], notes:'Riposo — proteine alte'},
+      {d:'Sab 7', acts:['gym','run'], notes:'Palestra C upper + 4×800m sterrato FC 155-165'},
+      {d:'Dom 8', acts:['rest'], notes:'Riposo'},
     ]
   },
   {
-    n:12, dates:'25–31 Mag', focus:'Carico', type:'load',
+    n:12, dates:'9–15 Giu', focus:'W12 — Carico Massimo', type:'load',
     days:[
-      {d:'Lun 25', acts:['gym','run'], notes:'Palestra A + Z2 45\''},
-      {d:'Mar 26', acts:['bike'], notes:'Bici 1h15\' Z2 FC<130'},
-      {d:'Mer 27', acts:['gym'], notes:'Palestra B'},
-      {d:'Gio 28', acts:['run'], notes:'4×800m sterrato piano — recupero 2\' — FC 155-165'},
-      {d:'Ven 29', acts:['gym'], notes:'Palestra C + pesata ⚖️ — sera carbo alti'},
-      {d:'Sab 30', acts:['run'], notes:'Lungo 26km / D+1100m — gel x2 — ZERO DEFICIT'},
-      {d:'Dom 31', acts:['rest'], notes:'Riposo totale — proteine alte'},
+      {d:'Lun 9', acts:['gym','run'], notes:'Palestra A upper + Z2 45\''},
+      {d:'Mar 10', acts:['bike'], notes:'Bici 1h15\' Z2 FC<130'},
+      {d:'Mer 11', acts:['gym'], notes:'Palestra B upper + Nordic Curl + Calf Raise'},
+      {d:'Gio 12', acts:['run'], notes:'🏔️ Lungo 30km / D+1400m — SIMULAZIONE ALPS TRAIL — gel ogni 30\' — ZERO DEFICIT'},
+      {d:'Ven 13', acts:['rest'], notes:'Riposo totale — proteine alte'},
+      {d:'Sab 14', acts:['gym'], notes:'Palestra C upper leggera'},
+      {d:'Dom 15', acts:['rest'], notes:'Riposo totale'},
     ]
   },
   {
-    n:13, dates:'1–7 Giu', focus:'Carico Massimo', type:'load',
+    n:13, dates:'16–22 Giu', focus:'W13 — 🔄 Scarico', type:'rest',
     days:[
-      {d:'Lun 1', acts:['gym'], notes:'Palestra A leggera -20%'},
-      {d:'Mar 2', acts:['run'], notes:'Corsa Z2 40\''},
-      {d:'Mer 3', acts:['gym'], notes:'Palestra B leggera'},
-      {d:'Gio 4', acts:['run'], notes:'Corsa Z2 50\' — niente qualità'},
-      {d:'Ven 5', acts:['rest'], notes:'Riposo — pesata ⚖️'},
-      {d:'Sab 6', acts:['run'], notes:'Lungo 33-35km / D+1700m — SIMULAZIONE ALPS TRAIL — gel ogni 30\' — ZERO DEFICIT'},
-      {d:'Dom 7', acts:['rest'], notes:'Riposo totale — proteine alte'},
+      {d:'Lun 16', acts:['gym'], notes:'Palestra A -30% upper'},
+      {d:'Mar 17', acts:['bike'], notes:'Bici 45\' Z2'},
+      {d:'Mer 18', acts:['gym'], notes:'Palestra B -30% + Nordic Curl leggero'},
+      {d:'Gio 19', acts:['run'], notes:'Lungo 12km / D+300m / Z2 leggero FC<140'},
+      {d:'Ven 20', acts:['rest'], notes:'Riposo — pesata ⚖️'},
+      {d:'Sab 21', acts:['gym'], notes:'Palestra C -30%'},
+      {d:'Dom 22', acts:['rest'], notes:'Riposo'},
     ]
   },
   {
-    n:14, dates:'8–14 Giu', focus:'🔄 Scarico', type:'rest',
+    n:14, dates:'23–28 Giu', focus:'W14 — Tapering + GARA', type:'race',
     days:[
-      {d:'Lun 8', acts:['gym'], notes:'Palestra A -30%'},
-      {d:'Mar 9', acts:['bike'], notes:'Bici 45\' Z2'},
-      {d:'Mer 10', acts:['gym'], notes:'Palestra B -30%'},
-      {d:'Gio 11', acts:['run'], notes:'Corsa Z2 30\' leggera'},
-      {d:'Ven 12', acts:['gym'], notes:'Palestra C -30% + pesata ⚖️'},
-      {d:'Sab 13', acts:['run'], notes:'Lungo 15km / D+500m / Z2'},
-      {d:'Dom 14', acts:['rest'], notes:'Riposo attivo'},
-    ]
-  },
-  {
-    n:15, dates:'15–21 Giu', focus:'Tapering Pre Alps Trail', type:'taper',
-    days:[
-      {d:'Lun 15', acts:['gym'], notes:'Palestra A leggera'},
-      {d:'Mar 16', acts:['run'], notes:'Corsa Z2 30\''},
-      {d:'Mer 17', acts:['gym'], notes:'Palestra B leggera'},
-      {d:'Gio 18', acts:['run'], notes:'Corsa Z2 20\' gambe sciolte'},
-      {d:'Ven 19', acts:['rest'], notes:'Riposo — pesata ⚖️'},
-      {d:'Sab 20', acts:['run'], notes:'Corsetta 20\' Z2'},
-      {d:'Dom 21', acts:['rest'], notes:'Riposo totale'},
-    ]
-  },
-  {
-    n:16, dates:'22–28 Giu', focus:'🏔️ GARA — ALPS TRAIL', type:'race',
-    days:[
-      {d:'Lun 22', acts:['rest'], notes:'Camminata 30\'. Carbo alti.'},
-      {d:'Mar 23', acts:['run'], notes:'Corsetta 20\' Z2'},
-      {d:'Mer 24', acts:['rest'], notes:'Stretching e mobilità'},
-      {d:'Gio 25', acts:['rest'], notes:'Riposo totale'},
-      {d:'Ven 26', acts:['rest'], notes:'Riposo — pesata ⚖️ — prepara zaino'},
-      {d:'Sab 27', acts:['rest'], notes:'Carbo alti. Dormi presto.'},
+      {d:'Lun 23', acts:['run'], notes:'Corsetta 20\' Z2 — gambe sciolte'},
+      {d:'Mar 24', acts:['rest'], notes:'Riposo'},
+      {d:'Mer 25', acts:['run'], notes:'Corsetta 15\' + 4 allunghi'},
+      {d:'Gio 26', acts:['rest'], notes:'Riposo totale'},
+      {d:'Ven 27', acts:['rest'], notes:'Riposo — prepara zaino — carbo alti'},
+      {d:'Sab 28', acts:['rest'], notes:'Carbo alti. Dormi presto.'},
       {d:'Dom 28 Giu', acts:['race'], notes:'🏔️ ALPS TRAIL 38km / 2500m+ — OBIETTIVO: FINIRLO 💪'},
     ]
   },
@@ -1245,6 +1219,30 @@ function buildExercises(exercises, containerId, scheda) {
             ${w==='S4' ? `<div style="font-size:9px;color:#ff8c00;margin-top:2px;font-weight:700;">🔄 -20%</div>` : suggestion}
           </div>
         `}).join('')}
+      </div>
+      <div style="margin-top:4px;margin-bottom:4px;">
+        <div style="font-size:10px;color:${color};font-weight:700;letter-spacing:1px;margin-bottom:6px;margin-top:10px;">W9 → W16</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+          ${['W9','W10','W11','W12','W13','W14','W15','W16'].map((w, wi) => {
+            const prevWeek = wi > 0 ? ['W9','W10','W11','W12','W13','W14','W15','W16'][wi-1] : null;
+            const prevVal = prevWeek ? (savedWeek[prevWeek] || '') : '';
+            const currVal = savedWeek[w] || '';
+            let suggestion = '';
+            if (prevVal && !currVal) {
+              suggestion = `<div style="font-size:9px;color:${color};margin-top:2px;">↑ +2.5kg?</div>`;
+            }
+            return `
+            <div>
+              <div style="font-size:10px;color:${color};margin-bottom:3px;font-family:'DM Mono';font-weight:700;">${w}</div>
+              <input class="weight-input" style="width:100%;font-size:12px;padding:5px 7px;border-color:${color}44;"
+                type="number" placeholder="kg"
+                value="${currVal}"
+                onchange="saveWeight2('${ex.key}','${w}',this.value);buildExercises([],'${containerId}','${scheda}')"
+              />
+              ${suggestion}
+            </div>
+          `}).join('')}
+        </div>
       </div>
     `;
     container.appendChild(card);
