@@ -350,32 +350,8 @@
     </div>
 
     <div class="section-title">Obiettivi 2026</div>
-    <div class="goals-grid">
-      <div class="goal-card trail">
-        <div class="goal-date">2 MAGGIO 2026</div>
-        <div class="goal-name">Trail del Mugello</div>
-        <div class="goal-target">24km / 1.280m+ — Top 20-25%</div>
-        <div class="goal-badge">~2:45-3:00</div>
-      </div>
-      <div class="goal-card maratona">
-        <div class="goal-date">29 NOVEMBRE 2026</div>
-        <div class="goal-name">Maratona di Firenze</div>
-        <div class="goal-target">42.2km — Sub 4 ore</div>
-        <div class="goal-badge">5:41/km</div>
-      </div>
-      <div class="goal-card fisico">
-        <div class="goal-date">PROGRESSIVO</div>
-        <div class="goal-name">Composizione Corporea</div>
-        <div class="goal-target">Da 23% → 15% massa grassa</div>
-        <div class="goal-badge">~65kg obiettivo</div>
-      </div>
-      <div class="goal-card tri">
-        <div class="goal-date">2027</div>
-        <div class="goal-name">Triathlon 70.3</div>
-        <div class="goal-target">Nuoto da imparare</div>
-        <div class="goal-badge">Long term</div>
-      </div>
-    </div>
+    <div class="goals-grid" id="goals-container"></div>
+    <button onclick="addGoal()" style="width:100%;margin-bottom:16px;padding:12px;background:var(--surface2);border:2px dashed var(--accent);border-radius:12px;color:var(--accent);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:1px;">+ Aggiungi obiettivo</button>
 
     <div class="section-title">Regole del tuo allenamento</div>
     <div style="display:grid;gap:8px;">
@@ -689,9 +665,10 @@
 
     <!-- TARGET PESO -->
     <div class="progress-log">
-      <h3>🎯 Target Peso — Obiettivo 66kg entro 7 agosto</h3>
-      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Tap per segnare raggiunto → mancato → reset</p>
+      <h3>🎯 Target Peso — Obiettivo 65kg entro venerdì 20 novembre</h3>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px;">Tap sul cerchio per segnare raggiunto → mancato → reset. Modifica data/peso direttamente nei campi.</p>
       <div id="weight-targets"></div>
+      <button onclick="addTarget()" style="width:100%;margin-top:8px;padding:10px;background:var(--surface2);border:2px dashed var(--accent);border-radius:10px;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;">+ Aggiungi target</button>
     </div>
 
     <!-- LOG PESO -->
@@ -721,51 +698,121 @@
 
 <script>
 // ===== TARGET PESO =====
-const weightTargets = [
-  { date: '30 mar', target: 70.9 },
-  { date: '15 apr', target: 69.5 },
-  { date: 'Ven 30 mag', target: 70.2 },
-  { date: 'Ven 6 giu', target: 69.8 },
-  { date: 'Ven 13 giu', target: 69.4 },
-  { date: 'Ven 20 giu', target: 69.0 },
-  { date: 'Ven 27 giu', target: 68.6 },
-  { date: 'Ven 4 lug', target: 68.2 },
-  { date: 'Ven 11 lug', target: 67.8 },
-  { date: 'Ven 18 lug', target: 67.4 },
-  { date: 'Ven 25 lug', target: 67.0 },
-  { date: 'Ven 1 ago', target: 66.6 },
-  { date: 'Ven 7 ago', target: 66.0 },
+// Obiettivo: 72kg venerdì 10 luglio 2026 -> 65kg venerdì 20 novembre 2026
+// Calo medio ~0.35-0.4kg a settimana (ritmo sostenibile) su 19 settimane
+const defaultWeightTargets = [
+  { id:'t0', date: 'Ven 10 lug', target: 72.0 },
+  { id:'t1', date: 'Ven 17 lug', target: 71.6 },
+  { id:'t2', date: 'Ven 24 lug', target: 71.3 },
+  { id:'t3', date: 'Ven 31 lug', target: 70.9 },
+  { id:'t4', date: 'Ven 7 ago', target: 70.5 },
+  { id:'t5', date: 'Ven 14 ago', target: 70.2 },
+  { id:'t6', date: 'Ven 21 ago', target: 69.8 },
+  { id:'t7', date: 'Ven 28 ago', target: 69.4 },
+  { id:'t8', date: 'Ven 4 set', target: 69.1 },
+  { id:'t9', date: 'Ven 11 set', target: 68.7 },
+  { id:'t10', date: 'Ven 18 set', target: 68.3 },
+  { id:'t11', date: 'Ven 25 set', target: 67.9 },
+  { id:'t12', date: 'Ven 2 ott', target: 67.6 },
+  { id:'t13', date: 'Ven 9 ott', target: 67.2 },
+  { id:'t14', date: 'Ven 16 ott', target: 66.8 },
+  { id:'t15', date: 'Ven 23 ott', target: 66.5 },
+  { id:'t16', date: 'Ven 30 ott', target: 66.1 },
+  { id:'t17', date: 'Ven 6 nov', target: 65.7 },
+  { id:'t18', date: 'Ven 13 nov', target: 65.4 },
+  { id:'t19', date: 'Ven 20 nov', target: 65.0 },
 ];
+
+function getWeightTargetsList() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('dan_weight_targets_list'));
+    if (saved && Array.isArray(saved) && saved.length) return saved;
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(defaultWeightTargets));
+}
+function setWeightTargetsList(list) {
+  try { localStorage.setItem('dan_weight_targets_list', JSON.stringify(list)); } catch(e) {}
+}
 
 function renderWeightTargets() {
   const container = document.getElementById('weight-targets');
+  if (!container) return;
+  const targets = getWeightTargetsList();
   const saved = JSON.parse(localStorage.getItem('dan_weight_targets') || '{}');
-  container.innerHTML = weightTargets.map((t, i) => {
-    const status = saved[i];
+  if (!targets.length) {
+    container.innerHTML = '<p style="color:var(--text3);font-size:13px;">Nessun target ancora. Aggiungine uno!</p>';
+    return;
+  }
+  container.innerHTML = targets.map((t, i) => {
+    const status = saved[t.id];
     const isOk = status === 'ok';
     const isNo = status === 'no';
     const accentColor = isOk ? '#aaff00' : isNo ? '#ff6b6b' : 'var(--border)';
     const bgColor = isOk ? 'rgba(170,255,0,0.08)' : isNo ? 'rgba(255,107,107,0.08)' : 'var(--surface2)';
     const icon = isOk ? '✅' : isNo ? '❌' : '○';
-    const isFinal = i === weightTargets.length - 1;
+    const valColor = isOk ? '#aaff00' : isNo ? '#ff6b6b' : 'var(--text)';
+    const isFinal = i === targets.length - 1;
     return `
-    <div onclick="cycleTarget(${i})" style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${bgColor};border-left:3px solid ${accentColor};border-radius:0 8px 8px 0;margin-bottom:6px;cursor:pointer;transition:all 0.2s;">
-      <div style="font-size:18px;min-width:24px;text-align:center">${icon}</div>
-      <div style="flex:1">
-        <div style="font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">${t.date}</div>
-        <div style="font-family:'Bebas Neue';font-size:22px;color:${isOk ? '#aaff00' : isNo ? '#ff6b6b' : 'var(--text1)'};line-height:1.1">${t.target} <span style="font-size:14px">kg</span>${isFinal ? ' 🎯' : ''}</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:${bgColor};border-left:3px solid ${accentColor};border-radius:0 8px 8px 0;margin-bottom:6px;">
+      <div onclick="cycleTarget('${t.id}')" style="font-size:18px;min-width:24px;text-align:center;cursor:pointer;" title="Tap per segnare raggiunto/mancato">${icon}</div>
+      <div style="flex:1;min-width:0;">
+        <input value="${t.date}" onchange="updateTargetField('${t.id}','date',this.value)"
+          style="background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text3);font-size:11px;letter-spacing:1px;text-transform:uppercase;width:100%;padding:2px 0;outline:none;font-family:inherit;" />
+        <div style="display:flex;align-items:baseline;gap:4px;">
+          <input type="number" step="0.1" value="${t.target}" onchange="updateTargetField('${t.id}','target',this.value)"
+            style="background:transparent;border:none;color:${valColor};font-family:'Bebas Neue';font-size:22px;width:70px;padding:2px 0;outline:none;" />
+          <span style="font-size:14px;color:${valColor}">kg${isFinal ? ' 🎯' : ''}</span>
+        </div>
       </div>
-      ${isOk ? `<div style="font-size:10px;color:#aaff00;font-weight:700">RAGGIUNTO</div>` : isNo ? `<div style="font-size:10px;color:#ff6b6b;font-weight:700">MANCATO</div>` : `<div style="font-size:10px;color:var(--text3)">IN CORSO</div>`}
+      <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
+        <button onclick="moveTarget('${t.id}',-1)" ${i===0?'disabled':''} style="background:none;border:none;color:${i===0?'var(--border)':'var(--text3)'};font-size:12px;cursor:${i===0?'default':'pointer'};padding:0;line-height:1;" title="Sposta su">▲</button>
+        <button onclick="moveTarget('${t.id}',1)" ${i===targets.length-1?'disabled':''} style="background:none;border:none;color:${i===targets.length-1?'var(--border)':'var(--text3)'};font-size:12px;cursor:${i===targets.length-1?'default':'pointer'};padding:0;line-height:1;" title="Sposta giù">▼</button>
+      </div>
+      <div style="font-size:9px;font-weight:700;min-width:56px;text-align:center;color:${isOk ? '#aaff00' : isNo ? '#ff6b6b' : 'var(--text3)'}">${isOk ? 'RAGGIUNTO' : isNo ? 'MANCATO' : 'IN CORSO'}</div>
+      <button onclick="deleteTarget('${t.id}')" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;" title="Elimina target">×</button>
     </div>`;
   }).join('');
 }
 
-function cycleTarget(i) {
+function cycleTarget(id) {
   const saved = JSON.parse(localStorage.getItem('dan_weight_targets') || '{}');
-  if (!saved[i]) saved[i] = 'ok';
-  else if (saved[i] === 'ok') saved[i] = 'no';
-  else delete saved[i];
+  if (!saved[id]) saved[id] = 'ok';
+  else if (saved[id] === 'ok') saved[id] = 'no';
+  else delete saved[id];
   localStorage.setItem('dan_weight_targets', JSON.stringify(saved));
+  renderWeightTargets();
+}
+
+function updateTargetField(id, field, value) {
+  const targets = getWeightTargetsList();
+  const t = targets.find(x => x.id === id);
+  if (!t) return;
+  t[field] = field === 'target' ? parseFloat(value) : value;
+  setWeightTargetsList(targets);
+}
+
+function moveTarget(id, dir) {
+  const targets = getWeightTargetsList();
+  const idx = targets.findIndex(x => x.id === id);
+  const toIdx = idx + dir;
+  if (idx === -1 || toIdx < 0 || toIdx >= targets.length) return;
+  const moved = targets.splice(idx, 1)[0];
+  targets.splice(toIdx, 0, moved);
+  setWeightTargetsList(targets);
+  renderWeightTargets();
+}
+
+function deleteTarget(id) {
+  const targets = getWeightTargetsList().filter(x => x.id !== id);
+  setWeightTargetsList(targets);
+  renderWeightTargets();
+}
+
+function addTarget() {
+  const targets = getWeightTargetsList();
+  const last = targets[targets.length - 1];
+  targets.push({ id: 't_' + Date.now(), date: 'Nuova data', target: last ? last.target : 70.0 });
+  setWeightTargetsList(targets);
   renderWeightTargets();
 }
 
@@ -1707,6 +1754,9 @@ function exportData() {
     schedaA: JSON.parse(localStorage.getItem('dan_scheda_A') || 'null'),
     schedaB: JSON.parse(localStorage.getItem('dan_scheda_B') || 'null'),
     schedaC: JSON.parse(localStorage.getItem('dan_scheda_C') || 'null'),
+    goals: JSON.parse(localStorage.getItem('dan_goals') || 'null'),
+    weightTargetsList: JSON.parse(localStorage.getItem('dan_weight_targets_list') || 'null'),
+    weightTargetsStatus: JSON.parse(localStorage.getItem('dan_weight_targets') || 'null'),
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
   const url = URL.createObjectURL(blob);
@@ -1735,6 +1785,9 @@ function importData() {
         if (data.schedaA) localStorage.setItem('dan_scheda_A', JSON.stringify(data.schedaA));
         if (data.schedaB) localStorage.setItem('dan_scheda_B', JSON.stringify(data.schedaB));
         if (data.schedaC) localStorage.setItem('dan_scheda_C', JSON.stringify(data.schedaC));
+        if (data.goals) localStorage.setItem('dan_goals', JSON.stringify(data.goals));
+        if (data.weightTargetsList) localStorage.setItem('dan_weight_targets_list', JSON.stringify(data.weightTargetsList));
+        if (data.weightTargetsStatus) localStorage.setItem('dan_weight_targets', JSON.stringify(data.weightTargetsStatus));
         alert('✅ Dati importati! Ricarico l\'app...');
         location.reload();
       } catch(e) {
@@ -1744,6 +1797,89 @@ function importData() {
     reader.readAsText(file);
   };
   input.click();
+}
+
+// ===== OBIETTIVI (GOALS) =====
+const defaultGoals = [
+  { id:'g_trail', color:'#00e87a', date:'2 MAGGIO 2026', name:'Trail del Mugello', target:'24km / 1.280m+ — Top 20-25%', badge:'~2:45-3:00' },
+  { id:'g_maratona', color:'#aaff00', date:'29 NOVEMBRE 2026', name:'Maratona di Firenze', target:'42.2km — Sub 4 ore', badge:'5:41/km' },
+  { id:'g_fisico', color:'#0099ff', date:'PROGRESSIVO', name:'Composizione Corporea', target:'Da 23% → 15% massa grassa', badge:'~65kg obiettivo' },
+  { id:'g_tri', color:'#ffd600', date:'2027', name:'Triathlon 70.3', target:'Nuoto da imparare', badge:'Long term' },
+];
+
+function getGoals() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('dan_goals'));
+    if (saved && Array.isArray(saved) && saved.length) return saved;
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(defaultGoals));
+}
+function setGoals(list) {
+  try { localStorage.setItem('dan_goals', JSON.stringify(list)); } catch(e) {}
+}
+
+function renderGoals() {
+  const goals = getGoals();
+  const container = document.getElementById('goals-container');
+  if (!container) return;
+  if (!goals.length) {
+    container.innerHTML = '<p style="color:var(--text3);font-size:13px;grid-column:1/-1;">Nessun obiettivo ancora. Aggiungine uno!</p>';
+    return;
+  }
+  container.innerHTML = goals.map((g, i) => `
+    <div class="goal-card" style="border-left:3px solid ${g.color}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;">
+        <input class="goal-date" value="${g.date}" onchange="updateGoalField(${i},'date',this.value)" placeholder="DATA"
+          style="background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text2);font-size:11px;font-family:'DM Mono';width:100%;padding:2px 0;outline:none;" />
+        <div style="display:flex;gap:2px;flex-shrink:0;">
+          <button onclick="moveGoal(${i},${i-1})" ${i===0?'disabled':''} style="background:none;border:none;color:${i===0?'var(--border)':g.color};font-size:12px;cursor:${i===0?'default':'pointer'};padding:2px;" title="Sposta su">▲</button>
+          <button onclick="moveGoal(${i},${i+1})" ${i===goals.length-1?'disabled':''} style="background:none;border:none;color:${i===goals.length-1?'var(--border)':g.color};font-size:12px;cursor:${i===goals.length-1?'default':'pointer'};padding:2px;" title="Sposta giù">▼</button>
+          <button onclick="deleteGoal(${i})" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 2px;line-height:1;" title="Elimina obiettivo">×</button>
+        </div>
+      </div>
+      <input class="goal-name" value="${g.name}" onchange="updateGoalField(${i},'name',this.value)" placeholder="Nome obiettivo"
+        style="background:transparent;border:none;color:var(--text);font-size:15px;font-weight:700;width:100%;padding:3px 0;outline:none;font-family:inherit;margin-top:2px;" />
+      <input class="goal-target" value="${g.target}" onchange="updateGoalField(${i},'target',this.value)" placeholder="Descrizione target"
+        style="background:transparent;border:none;color:var(--text2);font-size:12px;width:100%;padding:2px 0;outline:none;font-family:inherit;" />
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <input class="goal-badge" value="${g.badge}" onchange="updateGoalField(${i},'badge',this.value)" placeholder="Badge"
+          style="background:${g.color}26;border:none;border-radius:20px;color:${g.color};font-size:11px;font-weight:500;padding:3px 10px;outline:none;font-family:inherit;flex:1;min-width:0;" />
+        <input type="color" value="${g.color}" onchange="updateGoalField(${i},'color',this.value)"
+          style="width:26px;height:26px;padding:0;border:none;border-radius:6px;background:none;cursor:pointer;flex-shrink:0;" title="Colore" />
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateGoalField(i, field, value) {
+  const goals = getGoals();
+  if (!goals[i]) return;
+  goals[i][field] = value;
+  setGoals(goals);
+  if (field === 'color') renderGoals();
+}
+
+function moveGoal(from, to) {
+  const goals = getGoals();
+  if (to < 0 || to >= goals.length) return;
+  const moved = goals.splice(from, 1)[0];
+  goals.splice(to, 0, moved);
+  setGoals(goals);
+  renderGoals();
+}
+
+function deleteGoal(i) {
+  const goals = getGoals();
+  goals.splice(i, 1);
+  setGoals(goals);
+  renderGoals();
+}
+
+function addGoal() {
+  const goals = getGoals();
+  goals.push({ id:'g_'+Date.now(), color:'#aaff00', date:'DATA', name:'Nuovo obiettivo', target:'Descrizione', badge:'Badge' });
+  setGoals(goals);
+  renderGoals();
 }
 
 // ===== SERVICE WORKER =====
@@ -1760,6 +1896,7 @@ renderWeightHistory();
 renderWeightTargets();
 renderRunHistory();
 renderDeficit();
+renderGoals();
 updateOverview();
 setTimeout(renderWeightChart, 100);
 
